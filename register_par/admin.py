@@ -1,13 +1,67 @@
 from django.contrib import admin
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib import messages
 from .models import Equipos, Disciplinas, Pistas, Arbitros, Participantes, Encuentros, EncuentroEquipo
 
-admin.site.register(Equipos)
-admin.site.register(Disciplinas)
-admin.site.register(Pistas)
-admin.site.register(Arbitros)
-admin.site.register(Participantes)
+class EquiposAdmin(admin.ModelAdmin):
+    list_display = ['idEqu', 'nomEqu', 'oliEqu', 'num_participantes', 'puede_eliminarse']
+    list_filter = ['oliEqu']
+    search_fields = ['nomEqu']  # ✅ AÑADIDO: Búsqueda por nombre
+    actions = ['eliminar_equipos_seguros']
+    
+    def num_participantes(self, obj):
+        return obj.participantes.count()
+    num_participantes.short_description = 'Nº Participantes'
+    
+    def puede_eliminarse(self, obj):
+        return obj.puede_eliminarse()
+    puede_eliminarse.boolean = True
+    puede_eliminarse.short_description = 'Puede Eliminarse'
+    
+    def eliminar_equipos_seguros(self, request, queryset):
+        """Action para eliminar solo equipos que no tienen dependencias"""
+        eliminados = 0
+        for equipo in queryset:
+            if equipo.puede_eliminarse():
+                equipo.delete()
+                eliminados += 1
+            else:
+                self.message_user(
+                    request, 
+                    f"No se pudo eliminar {equipo.nomEqu} - tiene encuentros asociados", 
+                    messages.WARNING
+                )
+        self.message_user(request, f"{eliminados} equipos eliminados correctamente")
+    eliminar_equipos_seguros.short_description = "Eliminar equipos (solo si no tienen encuentros)"
+
+admin.site.register(Equipos, EquiposAdmin)
+
+class ParticipantesAdmin(admin.ModelAdmin):
+    list_display = ['idPar', 'nomPar', 'curPar', 'equipo']
+    list_filter = ['equipo', 'curPar']
+    search_fields = ['nomPar', 'curPar']  # ✅ AÑADIDO: Búsqueda por nombre y curso
+
+admin.site.register(Participantes, ParticipantesAdmin)
+
+class DisciplinasAdmin(admin.ModelAdmin):
+    list_display = ['idDis', 'nomDis', 'duracion_estimada', 'min_equipos', 'max_equipos']
+    search_fields = ['nomDis']  # ✅ AÑADIDO: Búsqueda por nombre de disciplina
+
+admin.site.register(Disciplinas, DisciplinasAdmin)
+
+class PistasAdmin(admin.ModelAdmin):
+    list_display = ['idPis', 'nomPis', 'cubPis']
+    list_filter = ['cubPis']  # ✅ AÑADIDO: Filtro por cubierta/sin cubrir
+    search_fields = ['nomPis']  # ✅ AÑADIDO: Búsqueda por nombre de pista
+
+admin.site.register(Pistas, PistasAdmin)
+
+class ArbitrosAdmin(admin.ModelAdmin):
+    list_display = ['idArb', 'nomArb', 'telArb', 'conArb']
+    search_fields = ['nomArb']  # ✅ AÑADIDO: Búsqueda por nombre de árbitro
+
+admin.site.register(Arbitros, ArbitrosAdmin)
 
 class EncuentroEquipoFormSet(forms.BaseInlineFormSet):
     def clean(self):
@@ -51,6 +105,11 @@ class EncuentroEquipoFormSet(forms.BaseInlineFormSet):
                             f"El equipo '{equipo.nomEqu}' tiene {equipo.num_participantes} participantes. "
                             f"Mínimo requerido: {disciplina.min_participantes_por_equipo}"
                         )
+                    if equipo.num_participantes > disciplina.max_participantes_por_equipo:
+                        raise ValidationError(
+                            f"El equipo '{equipo.nomEqu}' tiene {equipo.num_participantes} participantes. "
+                            f"Máximo permitido: {disciplina.max_participantes_por_equipo}"
+                        )
 
 class EncuentroEquipoInline(admin.TabularInline):
     model = EncuentroEquipo
@@ -61,21 +120,15 @@ class EncuentroEquipoInline(admin.TabularInline):
 @admin.register(Encuentros)
 class EncuentrosAdmin(admin.ModelAdmin):
     inlines = [EncuentroEquipoInline]
-    list_display = ['idEnc', 'idDis', 'finiEnc', 'ffinEnc', 'idPis', 'arbitro']
-    list_filter = ['idDis', 'idPis', 'finiEnc']
-
-"""
-FORM SET: EncuentroEquipoFormSet
-
-FINALIDAD:
-Validar las reglas de negocio ANTES de que el encuentro se guarde,
-mostrando errores en el formulario como validaciones nativas de Django.
-
-QUÉ VALIDA:
-1. Número de equipos dentro del rango permitido por la disciplina
-2. Que cada equipo tenga suficientes participantes
-3. Previene completamente el guardado de encuentros inválidos
-
-CUÁNDO SE EJECUTA:
-Durante la validación del formulario del admin, antes del guardado.
-"""
+    list_display = ['idEnc', 'idDis', 'finiEnc', 'ffinEnc', 'estado', 'idPis', 'arbitro']
+    list_filter = ['idDis', 'idPis', 'finiEnc', 'estado']
+    search_fields = ['idDis__nomDis', 'idPis__nomPis']  # ✅ AÑADIDO: Búsqueda por nombre disciplina y pista
+    readonly_fields = ['estado']
+    date_hierarchy = 'finiEnc'  # ✅ AÑADIDO: Navegación por fechas
+    
+    def save_model(self, request, obj, form, change):
+        """Calcula fecha fin automáticamente si no se proporciona"""
+        if not obj.ffinEnc and obj.finiEnc and obj.idDis:
+            from datetime import timedelta
+            obj.ffinEnc = obj.finiEnc + obj.idDis.duracion_estimada
+        super().save_model(request, obj, form, change)

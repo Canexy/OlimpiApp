@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from datetime import timedelta
 
 class Equipos(models.Model):
     OPCIONES_SN = [
@@ -25,6 +26,23 @@ class Equipos(models.Model):
     def __str__(self):
         return self.nomEqu
     
+    def puede_eliminarse(self):
+        """Verifica si el equipo puede ser eliminado"""
+        from .models import EncuentroEquipo  # Importación local para evitar dependencia circular
+        tiene_encuentros = EncuentroEquipo.objects.filter(equipo=self).exists()
+        return not tiene_encuentros
+    
+    def delete(self, *args, **kwargs):
+        """Previene eliminación si hay dependencias"""
+        if not self.puede_eliminarse():
+            raise ValidationError(
+                f"No se puede eliminar el equipo '{self.nomEqu}' porque está participando en encuentros. "
+                f"Elimine primero los encuentros asociados."
+            )
+        
+        # Si el equipo se puede eliminar, proceder con eliminación en cascada
+        super().delete(*args, **kwargs)
+    
 class Disciplinas(models.Model):
     idDis = models.AutoField(primary_key=True)
     nomDis = models.CharField(max_length=50, verbose_name='Nombre de la disciplina:')
@@ -32,6 +50,11 @@ class Disciplinas(models.Model):
     max_equipos = models.PositiveIntegerField(default=10, verbose_name='Máximo de equipos por encuentro:')
     min_participantes_por_equipo = models.PositiveIntegerField(default=1, verbose_name='Mínimo de participantes por equipo:')
     max_participantes_por_equipo = models.PositiveIntegerField(default=10, verbose_name='Máximo de participantes por equipo:')
+    duracion_estimada = models.DurationField(
+        verbose_name='Duración estimada del encuentro:',
+        help_text='Formato: DD HH:MM:SS',
+        default=timedelta(hours=1)  # CORREGIDO: usar timedelta en lugar de string
+    )
     
     class Meta:
         db_table = 'DISCIPLINAS'
@@ -41,6 +64,16 @@ class Disciplinas(models.Model):
     def __str__(self):
         return self.nomDis
     
+    def clean(self):
+        """Validaciones de la disciplina"""
+        super().clean()
+        
+        if self.min_equipos > self.max_equipos:
+            raise ValidationError('El mínimo de equipos no puede ser mayor al máximo')
+        
+        if self.min_participantes_por_equipo > self.max_participantes_por_equipo:
+            raise ValidationError('El mínimo de participantes por equipo no puede ser mayor al máximo')
+
 class Pistas(models.Model):
     OPCIONES_SN = [
         ('S', 'Sí'),
@@ -86,7 +119,14 @@ class Participantes(models.Model):
     curPar = models.CharField(max_length=5, verbose_name='Curso:')
     telPar = models.CharField(max_length=9, verbose_name='Teléfono de contacto:')
     conPar = models.EmailField(max_length=75, verbose_name='Correo de contacto:')
-    equipo = models.ForeignKey(Equipos, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Equipo al que pertenece')
+    equipo = models.ForeignKey(
+        Equipos, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        verbose_name='Equipo al que pertenece',
+        related_name='participantes'  # AÑADIDO: related_name explícito
+    )
 
     class Meta:
         db_table = 'PARTICIPANTES'
@@ -95,15 +135,45 @@ class Participantes(models.Model):
     
     def __str__(self):
         return f"{self.nomPar} ({self.curPar})"
+    
+    def delete(self, *args, **kwargs):
+        """Maneja eliminación de participantes con validaciones"""
+        from django.db import transaction
+        
+        with transaction.atomic():
+            equipo = self.equipo
+            
+            # Eliminar el participante
+            super().delete(*args, **kwargs)
+            
+            # Si el equipo queda sin participantes, eliminarlo también
+            if equipo and equipo.participantes.count() == 0:  # Ahora usa el related_name
+                if equipo.puede_eliminarse():
+                    equipo.delete()
+                else:
+                    # Si no se puede eliminar el equipo, solo mantenerlo vacío
+                    pass
 
 class Encuentros(models.Model):
+    ESTADOS_ENCUENTRO = [
+        ('CONFIRMADO', 'Confirmado'),
+        ('EN_PROGRESO', 'En Progreso'),
+        ('FINALIZADO', 'Finalizado'),
+    ]
+    
     idEnc = models.AutoField(primary_key=True)
     idDis = models.ForeignKey(Disciplinas, on_delete=models.CASCADE, verbose_name='Disciplina:')
     finiEnc = models.DateTimeField(verbose_name='Fecha de inicio:')
-    ffinEnc = models.DateTimeField(verbose_name='Fecha de fin:')
+    ffinEnc = models.DateTimeField(verbose_name='Fecha de fin:', null=True, blank=True)
     idPis = models.ForeignKey(Pistas, on_delete=models.CASCADE, verbose_name='Pista:')
     arbitro = models.ForeignKey(Arbitros, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Árbitro asociado:')
     equipos = models.ManyToManyField(Equipos, through='EncuentroEquipo', verbose_name='Equipos participantes:')
+    estado = models.CharField(
+        max_length=15, 
+        choices=ESTADOS_ENCUENTRO, 
+        default='CONFIRMADO',
+        verbose_name='Estado del encuentro:'
+    )
     
     class Meta:
         db_table = 'ENCUENTROS'
@@ -111,65 +181,55 @@ class Encuentros(models.Model):
         verbose_name_plural = 'Encuentros'
         constraints = [
             models.CheckConstraint(
-                check=models.Q(ffinEnc__gt=models.F('finiEnc')),
+                check=models.Q(ffinEnc__gt=models.F('finiEnc')) | models.Q(ffinEnc__isnull=True),
                 name='check_fechas_encuentro'
             )
         ]
     
     def __str__(self):
-        return f"Encuentro {self.idEnc} - {self.idDis}"
+        return f"Encuentro {self.idEnc} - {self.idDis} ({self.estado})"
     
     def clean(self):
-        """Solo validación básica de campos directos"""
+        """Validación mejorada de fechas - MÁS ROBUSTA"""
         super().clean()
         
-        if self.finiEnc and self.ffinEnc and self.ffinEnc <= self.finiEnc:
-            raise ValidationError({
-                'ffinEnc': 'La fecha de fin debe ser posterior a la fecha de inicio.'
-            })
+        # Si ambas fechas están presentes, validar que fin > inicio
+        if self.finiEnc and self.ffinEnc:
+            if self.ffinEnc <= self.finiEnc:
+                raise ValidationError({
+                    'ffinEnc': 'La fecha de fin debe ser posterior a la fecha de inicio.'
+                })
+        
+        # Si no hay fecha fin, está bien (se calculará automáticamente)
     
-    def es_valido_para_disciplina(self):
-        """
-        Valida si el encuentro cumple todas las reglas de su disciplina
-        Retorna: (booleano, lista_de_errores)
-        """
-        errors = []
+    def save(self, *args, **kwargs):
+        """Lógica automática de estados y cálculo de fecha fin"""
+        from django.utils import timezone
         
-        if not self.idDis:
-            return False, ["No tiene disciplina asignada"]
+        # Calcular fecha fin si no existe y tenemos disciplina
+        if not self.ffinEnc and self.finiEnc and self.idDis:
+            self.ffinEnc = self.finiEnc + self.idDis.duracion_estimada
         
-        # Validar número de equipos
-        equipos_count = self.equipos.count()
-        if not (self.idDis.min_equipos <= equipos_count <= self.idDis.max_equipos):
-            errors.append(
-                f"Requiere entre {self.idDis.min_equipos} y {self.idDis.max_equipos} equipos. "
-                f"Tiene {equipos_count}."
-            )
-        
-        # Validar participantes por equipo
-        if equipos_count > 0:
-            from django.db.models import Count
-            equipos_con_conteo = self.equipos.annotate(
-                num_participantes=Count('participantes')
-            )
-            for equipo in equipos_con_conteo:
-                if equipo.num_participantes < self.idDis.min_participantes_por_equipo:
-                    errors.append(
-                        f"El equipo '{equipo.nomEqu}' tiene {equipo.num_participantes} participantes. "
-                        f"Mínimo: {self.idDis.min_participantes_por_equipo}"
-                    )
-        
-        return len(errors) == 0, errors
+        # Determinar estado basado en fechas
+        now = timezone.now()
+        if self.finiEnc and self.ffinEnc:
+            if now < self.finiEnc:
+                self.estado = 'CONFIRMADO'
+            elif self.finiEnc <= now <= self.ffinEnc:
+                self.estado = 'EN_PROGRESO'
+            else:
+                self.estado = 'FINALIZADO'
+        elif self.finiEnc and now >= self.finiEnc:
+            self.estado = 'EN_PROGRESO'
+        else:
+            self.estado = 'CONFIRMADO'
+            
+        super().save(*args, **kwargs)
 
 class EncuentroEquipo(models.Model):
-    ROLES_EQUIPO = [
-        ('L', 'Local'),
-        ('V', 'Visitante'),
-    ]
     
     encuentro = models.ForeignKey(Encuentros, on_delete=models.CASCADE)
     equipo = models.ForeignKey(Equipos, on_delete=models.CASCADE)
-    rol = models.CharField(max_length=1, choices=ROLES_EQUIPO, verbose_name='Rol del equipo:')
     
     class Meta:
         db_table = 'ENCUENTRO_EQUIPO'
