@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Vista Equipos:</h2>
+    <ul>
+        {% for equipos in object_list %}
+            <li>{{ equipos.nomEqu }} 
+                {% if equipos.oliEqu == 'S' %}
+                    es olímpico.
+                {% else %}
+                    no es olímpico.
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+<!-- oliEqu habla de si el equipo creado es olímpico, es decir, está creado con participantes de diferentes colegios. -->
