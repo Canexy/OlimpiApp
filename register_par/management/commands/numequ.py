@@ -21,14 +21,14 @@ class Command(BaseCommand):
             if oliEqu not in ['N', 'S']:
                 raise CommandError("El argumento -o debe ser 'n' para equipos no olímpicos, o 's' para equipos olímpicos.")
             try:
-                total_equipos = Equipos.objects.filter(oliEqu=oliEqu.upper()).count()
+                total = Equipos.objects.filter(oliEqu=oliEqu.upper()).count()
             except Equipos.DoesNotExist:
                 raise CommandError("No existe ningún equipo con el valor especificado.")
 
-            if total_equipos == 0:
+            if total == 0:
                 self.stdout.write(f"No hay equipos con esa condición.")
             else:
                 if oliEqu == 'S':
-                    self.stdout.write(f"Número total de equipos olímpicos registrados: {total_equipos}.")
+                    self.stdout.write(f"Número total de equipos olímpicos registrados: {total}.")
                 else:
-                    self.stdout.write(f"Número total de equipos no olímpicos registrados: {total_equipos}.")
+                    self.stdout.write(f"Número total de equipos no olímpicos registrados: {total}.")
