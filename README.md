@@ -40,7 +40,7 @@ sudo apt install python3-pip
 Creamos el entorno virtual sobre el que trabajaremos y donde tendremos todas las dependencias que necesitemos para el proyecto.
 
 ```console
-python3 -m venv venv
+python3 -m venv .venv
 ```
 
 #### Activación del entorno virtual
@@ -92,7 +92,7 @@ Asegurándonos que el entorno virtual está activado y todas las dependencias es
 python3 manage.py runserver
 ```
 
-Si todo va bien, aparecerá un enlace `127.0.0.1:8080`, haciendo referencia al `localhost` y puerto sobre el que se está inicializando. Copiando dicha dirección en un navegador o haciendo Ctrl + click sobre el enlace que se muestra en consola, nos llevará a la página principal.
+Si todo va bien, aparecerá un enlace `http://127.0.0.1:8080`, haciendo referencia al 'localhost' y puerto sobre el que se está inicializando. Copiando dicha dirección en un navegador o haciendo Ctrl + click sobre el enlace que se muestra en consola, nos llevará a la página principal.
 
 ---
 
@@ -100,7 +100,10 @@ Si todo va bien, aparecerá un enlace `127.0.0.1:8080`, haciendo referencia al `
 
 Por defecto, aún no hay un 'index' como tal de nuestra web. Es decir, el enlace de antes no nos llevará a ningún lado o no mostrará nada, sólo un código de error.
 
-Añadiendo `/admin` al final del enlace nos llevará a la vista de Administrador de Django.
+Añadiendo `/admin` al final del enlace nos llevará a la vista de Administrador de Django:
+
+`http://127.0.0.1:8080/admin`
+
 
 #### Accediendo a la vista
 
