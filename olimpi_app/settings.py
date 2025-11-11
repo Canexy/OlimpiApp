@@ -1,13 +1,23 @@
 from pathlib import Path
-import os
-from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = os.getenv("SECRET_KEY", "insecure-default-key")
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+# Prácticas de seguridad desactivadas temporalmente.
+
+# import os
+# from dotenv import load_dotenv
+
+# load_dotenv(BASE_DIR / ".env")
+
+# SECRET_KEY = os.getenv("SECRET_KEY", "insecure-default-key")
+# DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+
+SECRET_KEY='django-insecure-5rl8yxb!#rh*ohpe-3hz($#9riec0xd=eq^ugwh=+_5aumw4l8'
+DEBUG=True
+ALLOWED_HOSTS=['localhost','127.0.0.1']
+
+#
 
 INSTALLED_APPS = [
     'register_par.apps.RegisterParConfig',
@@ -49,6 +59,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'olimpi_app.wsgi.application'
 
+# Prácticas de seguridad desactivadas temporalmente.
+
+'''
 DATABASES = {
     'default': {
         'ENGINE': os.getenv("DB_ENGINE", "django.db.backends.sqlite3"),
@@ -57,6 +70,16 @@ DATABASES = {
         'PASSWORD': os.getenv("DB_PASS", ""),
         'HOST': os.getenv("DB_HOST", ""),
         'PORT': os.getenv("DB_PORT", ""),
+    }
+}
+'''
+
+#
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
