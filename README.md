@@ -110,7 +110,7 @@ Por defecto, aún no hay un 'index' como tal de nuestra web. Es decir, el enlace
 
 Añadiendo `/admin` al final del enlace nos llevará a la vista de Administrador de Django:
 
-`http://127.0.0.1:8080/admin`
+`http://127.0.0.1:8080/admin/`
 
 
 #### Accediendo a la vista
@@ -118,3 +118,25 @@ Añadiendo `/admin` al final del enlace nos llevará a la vista de Administrador
 Por defecto, las credenciales son `admin` para usuario y `admin` para contraseña.
 
 Ya dentro, podremos ver cada tabla y acceder al contenido de cada una de ellas.
+
+---
+
+### Novedades:
+
+- Se han añadido diferentes vistas de lista y detalle para Equipos. 
+
+Será accesible desde el enlace `http://127.0.0.1:8000/register_par/equipos/` para la visualización completa de todos los equipos registrados en la base de datos actual.
+
+Una vez dentro, podemos seleccionar cada equipo para visualizar los detalles del mismo, como su ID, participantes y la opción *olímpico*.
+
+> Un equipo olímpico se forma con la idea de que sus miembros no pertenezcan al mismo centro educativo.
+
+- Se ha creado el comando `numequ` para el visionado por consola del número de Equipos.
+
+De nuevo, nace de la idea del visionado de los diferentes equipos existentes en la base de datos, ya sean todos, o según la opción *olímpico*.
+
+```console
+python3 manage.py numequ
+```
+
+Sin opción veremos la totalidad de equipos existentes. Usando la opción `-o` seguido de `s` ó `n` podemos ver los equipos *olímpicos* o *no olímpicos*. Alternativamente, se puede usar con la opción `-h` para más información sobre su uso.
