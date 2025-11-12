@@ -66,11 +66,20 @@ Comprobamos que la instalación se ha realizado con éxito.
 ```console
 git --version
 ```
+
+<sup>Se recomienda encarecidamente configurar Git para futuros usos relacionados.
+
 #### Clonación en local
 Con el siguiente comando tendremos una copia en local del repositorio disponible en Github con los últimos cambios.
 
 ```console
 git clone https://github.com/Canexy/Django_OlimpiApp.git
+```
+
+Hecho esto, navegamos dentro de la carpeta creada donde ejecutaremos el resto de comandos para su configuración y uso.
+
+```console
+cd Django_OlimpiApp/
 ```
 
 ---
@@ -85,7 +94,6 @@ pip install -r requirements.txt
 ---
 
 ### Ejecución del servidor de la aplicación
-
 Asegurándonos que el entorno virtual está activado y todas las dependencias están instaladas debidamente, ejecutamos el comando desde raíz del proyecto.
 
 ```console
