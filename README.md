@@ -106,8 +106,6 @@ Si todo va bien, aparecerá un enlace `http://127.0.0.1:8080`, haciendo referenc
 
 ### Vista de Administrador
 
-Por defecto, aún no hay un 'index' como tal de nuestra web. Es decir, el enlace de antes no nos llevará a ningún lado o no mostrará nada, sólo un código de error.
-
 Añadiendo `/admin` al final del enlace nos llevará a la vista de Administrador de Django:
 
 `http://127.0.0.1:8080/admin/`
@@ -140,3 +138,8 @@ python3 manage.py numequ
 ```
 
 Sin opción veremos la totalidad de equipos existentes. Usando la opción `-o` seguido de `s` ó `n` podemos ver los equipos *olímpicos* o *no olímpicos*. Alternativamente, se puede usar con la opción `-h` para más información sobre su uso.
+
+- Se ha integrado inicialmente Wagtail.
+
+Ahora, `http://127.0.0.1:8000` no da error y aparece como página principal de la aplicación (sigue sin tener contenido).
+También, desde `http://127.0.0.1:8000/wadmin/` se puede acceder a la consola de administración de Wagtail.
