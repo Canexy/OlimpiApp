@@ -23,7 +23,7 @@ Se ha añadido también una tabla *n:m* que incluye la relación de *Encuentros*
 ### Configuración y ejecución (contemplada únicamente en Linux):
 
 #### Instalación de Python y Pip (en distribución Debian)
-Con los siguientes comandos instalaremos Python y Pip respectivamente.
+Con los siguientes comandos instalaremos Python, Pip y Env respectivamente.
 
 ```console
 sudo apt update
@@ -32,6 +32,10 @@ sudo apt install python3
 
 ```console
 sudo apt install python3-pip
+```
+
+```console
+sudo apt install python3-env
 ```
 
 ---
