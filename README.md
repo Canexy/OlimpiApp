@@ -1,5 +1,6 @@
-# Django 'OlimpiApp'
-## Sistema de gestión para competiciones deportivas desarrollado con Django.
+# OlimpiApp
+
+Sistema de gestión para competiciones deportivas desarrollado con Django.
 
 ## Implementaciones:
 
@@ -104,7 +105,7 @@ Asegurándonos que el entorno virtual está activado y todas las dependencias es
 python3 manage.py runserver
 ```
 
-Si todo va bien, aparecerá un enlace `http://127.0.0.1:8080`, haciendo referencia al 'localhost' y puerto sobre el que se está inicializando. Copiando dicha dirección en un navegador o haciendo Ctrl + click sobre el enlace que se muestra en consola, nos llevará a la página principal.
+Si todo va bien, aparecerá un enlace `http://127.0.0.1:8080/`, haciendo referencia al 'localhost' y puerto sobre el que se está inicializando. Copiando dicha dirección en un navegador o haciendo Ctrl + click sobre el enlace que se muestra en consola, nos llevará a la página principal.
 
 ---
 
@@ -145,5 +146,5 @@ Sin opción veremos la totalidad de equipos existentes. Usando la opción `-o` s
 
 - Se ha integrado inicialmente Wagtail.
 
-Ahora, `http://127.0.0.1:8000` no da error y aparece como página principal de la aplicación (sigue sin tener contenido).
+Ahora, `http://127.0.0.1:8000/` no da error y aparece como página principal de la aplicación (sigue sin tener contenido).
 También, desde `http://127.0.0.1:8000/wadmin/` se puede acceder a la consola de administración de Wagtail.
