@@ -19,7 +19,7 @@ ENV/
 
 # Django
 # db.sqlite3
-media/
+# media/
 staticfiles/
 *.mo
 
