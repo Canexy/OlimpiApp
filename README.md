@@ -1,10 +1,9 @@
 
 <p align="center" style="margin-bottom: 0;">
-  <img src="/media/olimpiApp_l.svg" alt="Logo" width="120" style="vertical-align: middle;">
-  <img src="/media/olimpiApp_t.svg" alt="Nombre" height="300" style="vertical-align: middle;">
+  <img src="/media/olimpiApp_a.svg" alt="Logo" width="50%" style="vertical-align: middle;">
 </p>
 
-<h1 align="center" style="margin-top: -50px;">
+<h1 align="center">
     Sistema de gestión para competiciones deportivas desarrollado con Django.
 </h1>
 
