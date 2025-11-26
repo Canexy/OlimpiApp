@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,7 +22,7 @@ ALLOWED_HOSTS=['localhost','127.0.0.1']
 
 INSTALLED_APPS = [
     'register_par',
-    # 'register_par.apps.RegisterParConfig',
+    'cms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -117,7 +118,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Wagtail Settings.
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 WAGTAIL_SITE_NAME = 'OlimpiApp'
 WAGTAILDOCS_EXTENSIONS = ['pdf']
-WAGTAILADMIN_BASE_URL = 'http://localhost:8000/wadmin/'
+WAGTAILADMIN_BASE_URL = 'http://localhost:8000/'
 # WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']

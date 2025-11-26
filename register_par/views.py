@@ -1,15 +1,15 @@
 
-from django.http import HttpResponse
+# from django.http import HttpResponse
 from django.views.generic import ListView, DetailView
 from .models import Equipos
-
-# # No implementado aún.
-
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+# No implementado aún.
+# Parte relacionada con el formulario.
+'''
+from django.http import HttpResponseRedirect
 from .forms import NameForm
-
+'''
 #
 
 class ListaEquiposView(ListView):
@@ -21,10 +21,12 @@ class DetalleEquipoView(DetailView):
     template_name = 'register_par/detalle_equipo.html'
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the register index.")
+    return render(request, "base.html")
 
 # No implementado aún.
+# Parte relacionada con el formulario.
 
+'''
 def get_name(request):
     if request.method == 'POST':
         form = NameForm(request.POST)
@@ -34,3 +36,4 @@ def get_name(request):
             form = NameForm()
 
         return render(request, 'register_par/name.html', {'form': form})
+'''

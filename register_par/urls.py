@@ -8,6 +8,6 @@ urlpatterns = [
     path('equipos/<int:pk>/', views.DetalleEquipoView.as_view(), name='detalle_equipo'),
 
     # No implementado aún.
-
-    path('name/', views.get_name, name='name'),
+    # Parte relacionada con el formulario.
+    # path('name/', views.get_name, name='name'),
 ]
