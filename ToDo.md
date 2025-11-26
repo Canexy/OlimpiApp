@@ -22,16 +22,16 @@
 
 - Quise adelantar un poco trabajo y estuve investigando sobre el despliegue en AWS. Parecido a ello, había trabajado anteriormente con Render y probé a realizar un despliegue rápido sobre el mismo. Creé un repositorio espejo del actual, tocando x configuraciones y pasando todas las variables de entorno a Render, consiguiendo así un despliegue del mismo:
 
-https://rendolimpiapp.onrender.com/
-https://rendolimpiapp.onrender.com/equipos
-https://rendolimpiapp.onrender.com/admin
-https://rendolimpiapp.onrender.com/wadmin
+`https://rendolimpiapp.onrender.com/`
+`https://rendolimpiapp.onrender.com/equipos/`
+`https://rendolimpiapp.onrender.com/admin/`
+`https://rendolimpiapp.onrender.com/wadmin/`
 
-https://github.com/Canexy/RendolimpiApp
+`https://github.com/Canexy/RendolimpiApp`
 
 - Además, creé un repositorio de pruebas para empezar a investigar con AWS, de nuevo, espejo al original:
 
-https://github.com/Canexy/AWSolimpiApp
+`https://github.com/Canexy/AWSolimpiApp`
 
 # (26/11)
 ## Hecho:

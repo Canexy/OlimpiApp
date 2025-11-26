@@ -133,7 +133,7 @@ Ya dentro, podremos ver cada tabla y acceder al contenido de cada una de ellas.
 
 - Se han añadido diferentes vistas de lista y detalle para Equipos. 
 
-Será accesible desde el enlace `http://127.0.0.1:8000/register_par/equipos/` para la visualización completa de todos los equipos registrados en la base de datos actual.
+Será accesible desde el enlace `http://127.0.0.1:8000/equipos/` para la visualización completa de todos los equipos registrados en la base de datos actual.
 
 Una vez dentro, podemos seleccionar cada equipo para visualizar los detalles del mismo, como su ID, participantes y la opción *olímpico*.
 
@@ -151,5 +151,5 @@ Sin opción veremos la totalidad de equipos existentes. Usando la opción `-o` s
 
 - Se ha integrado inicialmente Wagtail.
 
-Ahora, `http://127.0.0.1:8000/` no da error y aparece como página principal de la aplicación (sigue sin tener contenido).
-También, desde `http://127.0.0.1:8000/wadmin/` se puede acceder a la consola de administración de Wagtail.
+Ahora, `http://127.0.0.1:8000/` no da error y aparece como página principal de la aplicación (ahora usa el template `templates/base.html`).
+También, desde `http://127.0.0.1:8000/cms/` se puede acceder a la consola de administración de Wagtail.
