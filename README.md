@@ -7,6 +7,8 @@
     Sistema de gestión para competiciones deportivas desarrollado con Django.
 </h1>
 
+<!--
+
 ## Implementaciones:
 
 ### Modelos (*models.py*)
@@ -25,6 +27,8 @@ Se ha añadido también una tabla *n:m* que incluye la relación de *Encuentros*
 - Panel de administración Django personalizado con vistas de búsqueda.
 - Estados automáticos de encuentros basados en las fechas previstas en su creación.
 - Prevención de eliminación de equipos con encuentros asociados.
+
+-->
 
 ### Configuración y ejecución (contemplada únicamente en Linux):
 
@@ -112,7 +116,7 @@ python3 manage.py runserver
 
 Si todo va bien, aparecerá un enlace `http://127.0.0.1:8080/`, haciendo referencia al 'localhost' y puerto sobre el que se está inicializando. Copiando dicha dirección en un navegador o haciendo Ctrl + click sobre el enlace que se muestra en consola, nos llevará a la página principal.
 
----
+<!--
 
 ### Vista de Administrador
 
@@ -153,3 +157,5 @@ Sin opción veremos la totalidad de equipos existentes. Usando la opción `-o` s
 
 Ahora, `http://127.0.0.1:8000/` no da error y aparece como página principal de la aplicación (ahora usa el template `templates/base.html`).
 También, desde `http://127.0.0.1:8000/cms/` se puede acceder a la consola de administración de Wagtail.
+
+-->
