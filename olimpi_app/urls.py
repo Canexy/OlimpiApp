@@ -8,12 +8,12 @@ from wagtail.admin import urls as wagtailadmin_urls
 # from wagtail.documents import urls as wagtaildocs_urls
 
 urlpatterns = [
-    path('', include('register_par.urls')),
+    # path('', include('register_par.urls')),
     path('admin/', admin.site.urls),
     path('cms/', include(wagtailadmin_urls)),
-    path('blog/', include(wagtail_urls)),
+    path('wag/', include(wagtail_urls)),
     # path('documents/', include(wagtaildocs_urls)),
-    # path('', include(wagtail_urls))
+    path('', include(wagtail_urls))
 ]
 
 # Media files en Debug:

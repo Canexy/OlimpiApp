@@ -9,3 +9,20 @@ class HomePage(Page):
     content_panels = Page.content_panels + [
         FieldPanel('body'),
     ]
+
+class BlogIndexPage(Page):
+    template = "blog/blog_index_page.html"
+    intro = RichTextField(blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+    ]
+
+
+class BlogPage(Page):
+    template = "blog/blog_page.html"
+    body = RichTextField(blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('body'),
+    ]
