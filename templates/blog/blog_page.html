@@ -4,5 +4,9 @@
 
 {% block content %}
     <h1>{{ page.title }}</h1>
+    <p class="meta">{{ page.date }}</p>
+    
     {{ page.body|richtext }}
+
+    <a href="{{ page.get_parent.url }}">Página anterior</a>
 {% endblock %}

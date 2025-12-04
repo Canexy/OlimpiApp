@@ -11,7 +11,7 @@ urlpatterns = [
     # path('', include('register_par.urls')),
     path('admin/', admin.site.urls),
     path('cms/', include(wagtailadmin_urls)),
-    path('wag/', include(wagtail_urls)),
+    # path('wag/', include(wagtail_urls)),
     # path('documents/', include(wagtaildocs_urls)),
     path('', include(wagtail_urls))
 ]

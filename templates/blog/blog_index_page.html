@@ -11,10 +11,12 @@
     {% endif %}
 
     <ul>
+        {# for post in page.get_children # Sacará todas aunque estén en borrador. #}
         {% for post in page.get_children.live %}
             <li>
                 <a href="{{ post.url }}">{{ post.title }}</a>
             </li>
         {% endfor %}
     </ul>
+    <a href="{{ page.get_parent.url }}">Página anterior</a>
 {% endblock %}

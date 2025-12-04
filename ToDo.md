@@ -17,10 +17,12 @@ http://127.0.0.1:8000/
 http://127.0.0.1:8000/blog/
 http://127.0.0.1:8000/blog/welcome/
 
-
-
 **Cambios a realizar próximamente:**
 - Añadir los .html de *register_par/* dentro de *templates/app/*.
 - Creación e implementación de MySQL (AWS).
 
 https://docs.wagtail.org/en/stable/getting_started/tutorial.html
+
+
+#### Did - 04/12
+

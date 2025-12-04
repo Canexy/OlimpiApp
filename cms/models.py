@@ -1,4 +1,8 @@
-from wagtail.models import Page
+from django.db import models
+
+from wagtail.models import Page, Orderable
+from modelcluster.models import ParentalKey
+
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel
 
@@ -18,11 +22,13 @@ class BlogIndexPage(Page):
         FieldPanel('intro'),
     ]
 
-
 class BlogPage(Page):
     template = "blog/blog_page.html"
+    date = models.DateField("Date")
     body = RichTextField(blank=True)
 
     content_panels = Page.content_panels + [
         FieldPanel('body'),
+        FieldPanel('date'),
     ]
+
